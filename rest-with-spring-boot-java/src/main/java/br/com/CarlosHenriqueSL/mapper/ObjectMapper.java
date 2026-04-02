@@ -1,4 +1,4 @@
-package br.com.CarlosHenriqueSL;
+package br.com.CarlosHenriqueSL.mapper;
 
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;

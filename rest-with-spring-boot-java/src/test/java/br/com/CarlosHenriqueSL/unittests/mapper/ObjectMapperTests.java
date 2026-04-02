@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static br.com.CarlosHenriqueSL.ObjectMapper.parseListObjects;
-import static br.com.CarlosHenriqueSL.ObjectMapper.parseObject;
+import static br.com.CarlosHenriqueSL.mapper.ObjectMapper.parseListObjects;
+import static br.com.CarlosHenriqueSL.mapper.ObjectMapper.parseObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ObjectMapperTests {

@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static br.com.CarlosHenriqueSL.ObjectMapper.parseListObjects;
-import static br.com.CarlosHenriqueSL.ObjectMapper.parseObject;
+import static br.com.CarlosHenriqueSL.mapper.ObjectMapper.parseListObjects;
+import static br.com.CarlosHenriqueSL.mapper.ObjectMapper.parseObject;
 
 @Service
 public class PersonServices {
