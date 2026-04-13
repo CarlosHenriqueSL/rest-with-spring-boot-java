@@ -1,4 +1,4 @@
-package br.com.CarlosHenriqueSL.unittests.mapper;
+package br.com.CarlosHenriqueSL.unittests;
 
 import br.com.CarlosHenriqueSL.data.dto.PersonDTO;
 import br.com.CarlosHenriqueSL.model.Person;
