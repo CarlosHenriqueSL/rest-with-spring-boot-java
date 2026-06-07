@@ -1,7 +1,7 @@
-package br.com.CarlosHenriqueSL.integrationtests.controllers.cors.withjson;
+package br.com.CarlosHenriqueSL.integrationtests.books.controllers.cors.withjson;
 
 import br.com.CarlosHenriqueSL.config.TestConfigs;
-import br.com.CarlosHenriqueSL.integrationtests.dto.PersonDTO;
+import br.com.CarlosHenriqueSL.integrationtests.books.dto.BookDTO;
 import br.com.CarlosHenriqueSL.integrationtests.testcontainers.AbstractIntegrationTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -15,34 +15,37 @@ import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 
+import java.time.Instant;
+import java.util.Date;
+
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = "server.port=8888")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class PersonControllerCorsTest extends AbstractIntegrationTest {
+class BookControllerCorsTest extends AbstractIntegrationTest {
 
     private static RequestSpecification specification;
     private static ObjectMapper objectMapper;
 
-    private static PersonDTO person;
+    private static BookDTO book;
 
     @BeforeAll
     static void setUp() {
         objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-        person = new PersonDTO();
+        book = new BookDTO();
     }
 
     @Test
     @Order(1)
     void create() throws JsonProcessingException {
-        mockPerson();
+        mockBook();
 
         specification = new RequestSpecBuilder()
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_CARLOS)
-                .setBasePath("/api/person/v1")
+                .setBasePath("/api/book/v1")
                 .setPort(TestConfigs.SERVER_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -50,7 +53,7 @@ class PersonControllerCorsTest extends AbstractIntegrationTest {
 
         var content = given(specification)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(person)
+                .body(book)
                 .when()
                 .post()
                 .then()
@@ -59,32 +62,34 @@ class PersonControllerCorsTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        PersonDTO createdPerson = objectMapper.readValue(content, PersonDTO.class);
-        person = createdPerson;
+        BookDTO createdBook = objectMapper.readValue(content, BookDTO.class);
+        book = createdBook;
 
-        assertNotNull(createdPerson.getId());
-        assertNotNull(createdPerson.getFirstName());
-        assertNotNull(createdPerson.getLastName());
-        assertNotNull(createdPerson.getAddress());
-        assertNotNull(createdPerson.getGender());
+        assertNotNull(createdBook.getId());
+        assertNotNull(createdBook.getAuthor());
+        assertNotNull(createdBook.getLaunchDate());
+        assertNotNull(createdBook.getPrice());
+        assertNotNull(createdBook.getTitle());
 
-        assertTrue(createdPerson.getId() > 0);
+        assertTrue(createdBook.getId() > 0);
 
-        assertEquals("Richard", createdPerson.getFirstName());
-        assertEquals("Stallman", createdPerson.getLastName());
-        assertEquals("New York City - New York - USA", createdPerson.getAddress());
-        assertEquals("Male", createdPerson.getGender());
-        assertTrue(createdPerson.getEnabled());
+        assertEquals("Michael C. Feathers", createdBook.getAuthor());
+
+        Date expectedDate = Date.from(Instant.parse("2017-11-29T13:50:05.878Z"));
+        assertEquals(expectedDate, createdBook.getLaunchDate());
+
+        assertEquals(49.00, createdBook.getPrice());
+        assertEquals("Working effectively with legacy code", createdBook.getTitle());
     }
 
     @Test
     @Order(2)
     void createWithWrongOrigin() throws JsonProcessingException {
-        mockPerson();
+        mockBook();
 
         specification = new RequestSpecBuilder()
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_CARLOS2)
-                .setBasePath("/api/person/v1")
+                .setBasePath("/api/book/v1")
                 .setPort(TestConfigs.SERVER_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -92,7 +97,7 @@ class PersonControllerCorsTest extends AbstractIntegrationTest {
 
         var content = given(specification)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(person)
+                .body(book)
                 .when()
                 .post()
                 .then()
@@ -109,7 +114,7 @@ class PersonControllerCorsTest extends AbstractIntegrationTest {
     void findById() throws JsonProcessingException {
         specification = new RequestSpecBuilder()
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_LOCAL)
-                .setBasePath("/api/person/v1")
+                .setBasePath("/api/book/v1")
                 .setPort(TestConfigs.SERVER_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -117,7 +122,7 @@ class PersonControllerCorsTest extends AbstractIntegrationTest {
 
         var content = given(specification)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .pathParam("id", person.getId())
+                .pathParam("id", book.getId())
                 .when()
                 .get("{id}")
                 .then()
@@ -126,22 +131,24 @@ class PersonControllerCorsTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        PersonDTO createdPerson = objectMapper.readValue(content, PersonDTO.class);
-        person = createdPerson;
+        BookDTO createdBook = objectMapper.readValue(content, BookDTO.class);
+        book = createdBook;
 
-        assertNotNull(createdPerson.getId());
-        assertNotNull(createdPerson.getFirstName());
-        assertNotNull(createdPerson.getLastName());
-        assertNotNull(createdPerson.getAddress());
-        assertNotNull(createdPerson.getGender());
+        assertNotNull(createdBook.getId());
+        assertNotNull(createdBook.getAuthor());
+        assertNotNull(createdBook.getLaunchDate());
+        assertNotNull(createdBook.getPrice());
+        assertNotNull(createdBook.getTitle());
 
-        assertTrue(createdPerson.getId() > 0);
+        assertTrue(createdBook.getId() > 0);
 
-        assertEquals("Richard", createdPerson.getFirstName());
-        assertEquals("Stallman", createdPerson.getLastName());
-        assertEquals("New York City - New York - USA", createdPerson.getAddress());
-        assertEquals("Male", createdPerson.getGender());
-        assertTrue(createdPerson.getEnabled());
+        assertEquals("Michael C. Feathers", createdBook.getAuthor());
+
+        Date expectedDate = Date.from(Instant.parse("2017-11-29T02:00:00.000Z"));
+        assertEquals(expectedDate, createdBook.getLaunchDate());
+
+        assertEquals(49.00, createdBook.getPrice());
+        assertEquals("Working effectively with legacy code", createdBook.getTitle());
     }
 
     @Test
@@ -149,7 +156,7 @@ class PersonControllerCorsTest extends AbstractIntegrationTest {
     void findByIdWithWrongOrigin() throws JsonProcessingException {
         specification = new RequestSpecBuilder()
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_CARLOS2)
-                .setBasePath("/api/person/v1")
+                .setBasePath("/api/book/v1")
                 .setPort(TestConfigs.SERVER_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -157,7 +164,7 @@ class PersonControllerCorsTest extends AbstractIntegrationTest {
 
         var content = given(specification)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .pathParam("id", person.getId())
+                .pathParam("id", book.getId())
                 .when()
                 .get("{id}")
                 .then()
@@ -169,11 +176,13 @@ class PersonControllerCorsTest extends AbstractIntegrationTest {
         assertEquals("Invalid CORS request", content);
     }
 
-    private void mockPerson() {
-        person.setFirstName("Richard");
-        person.setLastName("Stallman");
-        person.setAddress("New York City - New York - USA");
-        person.setGender("Male");
-        person.setEnabled(true);
+    private void mockBook() {
+        book.setAuthor("Michael C. Feathers");
+
+        Instant instant = Instant.parse("2017-11-29T13:50:05.878Z");
+        book.setLaunchDate(Date.from(instant));
+
+        book.setPrice(49.00);
+        book.setTitle("Working effectively with legacy code");
     }
 }

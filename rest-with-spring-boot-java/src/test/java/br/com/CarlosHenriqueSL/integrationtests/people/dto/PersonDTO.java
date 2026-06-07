@@ -1,4 +1,4 @@
-package br.com.CarlosHenriqueSL.integrationtests.dto;
+package br.com.CarlosHenriqueSL.integrationtests.people.dto;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
 

@@ -1,14 +1,15 @@
-package br.com.CarlosHenriqueSL.data.dto;
+package br.com.CarlosHenriqueSL.integrationtests.books.dto;
 
-import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.core.Relation;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-@Relation(collectionRelation = "books")
-public class BookDTO extends RepresentationModel<BookDTO> implements Serializable {
+@XmlRootElement
+public class BookDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Long id;
     private String author;
@@ -61,12 +62,11 @@ public class BookDTO extends RepresentationModel<BookDTO> implements Serializabl
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof BookDTO bookDTO)) return false;
-        if (!super.equals(o)) return false;
         return Objects.equals(getId(), bookDTO.getId()) && Objects.equals(getAuthor(), bookDTO.getAuthor()) && Objects.equals(getLaunchDate(), bookDTO.getLaunchDate()) && Objects.equals(getPrice(), bookDTO.getPrice()) && Objects.equals(getTitle(), bookDTO.getTitle());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getId(), getAuthor(), getLaunchDate(), getPrice(), getTitle());
+        return Objects.hash(getId(), getAuthor(), getLaunchDate(), getPrice(), getTitle());
     }
 }
