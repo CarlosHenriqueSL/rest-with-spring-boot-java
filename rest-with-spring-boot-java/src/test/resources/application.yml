@@ -2,6 +2,10 @@ server:
   port: 8888
 cors:
   originPatterns: http://localhost:8080,http://localhost:3000
+file:
+  # Altere este caminho conforme a estrutura de pastas da sua maquina.
+  # Tambem pode ser sobrescrito pela variavel de ambiente FILE_UPLOAD_DIR.
+  upload-dir: ${FILE_UPLOAD_DIR:./UploadDir}
 spring:
   application:
     name: rest-with-spring-boot-java
@@ -14,6 +18,12 @@ spring:
       hibernate:
     show-sql: false
     open-in-view: false
+  servlet:
+    multipart:
+      enable: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 215MB
 logging:
   level:
     #root: WARN
