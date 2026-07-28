@@ -3,6 +3,7 @@ package br.com.CarlosHenriqueSL.controllers;
 import br.com.CarlosHenriqueSL.controllers.docs.FileControllerDocs;
 import br.com.CarlosHenriqueSL.data.dto.UploadFileResponseDTO;
 import br.com.CarlosHenriqueSL.services.FileStorageService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/file/v1")
+@Tag(name = "Files", description = "Endpoints for Managing Files")
 public class FileController implements FileControllerDocs {
 
     @Autowired
