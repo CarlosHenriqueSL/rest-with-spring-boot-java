@@ -2,8 +2,9 @@ package br.com.CarlosHenriqueSL.file.exporter.factory;
 
 import br.com.CarlosHenriqueSL.exception.BadRequestException;
 import br.com.CarlosHenriqueSL.file.exporter.MediaTypes;
-import br.com.CarlosHenriqueSL.file.exporter.contract.FileExporter;
+import br.com.CarlosHenriqueSL.file.exporter.contract.PersonExporter;
 import br.com.CarlosHenriqueSL.file.exporter.impl.CsvExporter;
+import br.com.CarlosHenriqueSL.file.exporter.impl.PdfExporter;
 import br.com.CarlosHenriqueSL.file.exporter.impl.XlsxExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +20,13 @@ public class FileExporterFactory {
     @Autowired
     private ApplicationContext context;
 
-    public FileExporter getExporter(String acceptHeader) {
+    public PersonExporter getExporter(String acceptHeader) {
         if (acceptHeader.equalsIgnoreCase(MediaTypes.APPLICATION_XLSX_VALUE)) {
             return context.getBean(XlsxExporter.class);
         } else if (acceptHeader.equalsIgnoreCase(MediaTypes.APPLICATION_CSV_VALUE)) {
             return context.getBean(CsvExporter.class);
+        } else if (acceptHeader.equalsIgnoreCase(MediaTypes.APPLICATION_PDF_VALUE)) {
+                return context.getBean(PdfExporter.class);
         } else {
             throw new BadRequestException("Invalid file format!");
         }

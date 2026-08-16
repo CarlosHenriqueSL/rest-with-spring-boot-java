@@ -1,5 +1,6 @@
 package br.com.CarlosHenriqueSL.integrationtests.books.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.io.Serializable;
@@ -13,6 +14,9 @@ public class BookDTO implements Serializable {
 
     private Long id;
     private String author;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "UTC")
+
     private Date launchDate;
     private Double price;
     private String title;

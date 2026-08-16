@@ -211,13 +211,13 @@ class BookControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(bookOne.getId());
         assertTrue(bookOne.getId() > 0);
 
-        assertEquals("Eric Freeman, Elisabeth Freeman, Kathy Sierra, Bert Bates", bookOne.getAuthor());
+        assertEquals("Mike Cohn", bookOne.getAuthor());
 
-        Date expectedDateBookOne = Date.from(Instant.parse("2017-11-07T02:00:00.000Z"));
+        Date expectedDateBookOne = Date.from(Instant.parse("2011-12-09T02:00:00.000Z"));
         assertEquals(expectedDateBookOne, bookOne.getLaunchDate());
 
-        assertEquals(110.00, bookOne.getPrice());
-        assertEquals("Head First Design Patterns", bookOne.getTitle());
+        assertEquals(112.87, bookOne.getPrice());
+        assertEquals("Agile Estimating and Planning", bookOne.getTitle());
 
         BookDTO bookThree = books.get(2);
         book = bookThree;
@@ -225,13 +225,13 @@ class BookControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(bookThree.getId());
         assertTrue(bookThree.getId() > 0);
 
-        assertEquals("Brian Goetz e Tim Peierls", bookThree.getAuthor());
+        assertEquals("Mike Cohn", bookThree.getAuthor());
 
-        Date expectedDateBookThree = Date.from(Instant.parse("2017-11-07T02:00:00.000Z"));
+        Date expectedDateBookThree = Date.from(Instant.parse("1985-06-28T03:00:00.000Z"));
         assertEquals(expectedDateBookThree, bookThree.getLaunchDate());
 
-        assertEquals(80.00, bookThree.getPrice());
-        assertEquals("Java Concurrency in Practice", bookThree.getTitle());
+        assertEquals(115.61, bookThree.getPrice());
+        assertEquals("Agile Estimating and Planning", bookThree.getTitle());
     }
 
     private void mockBook() {

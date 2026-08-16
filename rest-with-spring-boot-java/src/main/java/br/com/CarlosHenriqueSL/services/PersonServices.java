@@ -6,8 +6,7 @@ import br.com.CarlosHenriqueSL.exception.BadRequestException;
 import br.com.CarlosHenriqueSL.exception.FileStorageException;
 import br.com.CarlosHenriqueSL.exception.RequiredObjectIsNullException;
 import br.com.CarlosHenriqueSL.exception.ResourceNotFoundException;
-import br.com.CarlosHenriqueSL.file.exporter.MediaTypes;
-import br.com.CarlosHenriqueSL.file.exporter.contract.FileExporter;
+import br.com.CarlosHenriqueSL.file.exporter.contract.PersonExporter;
 import br.com.CarlosHenriqueSL.file.exporter.factory.FileExporterFactory;
 import br.com.CarlosHenriqueSL.file.importer.contract.FileImporter;
 import br.com.CarlosHenriqueSL.file.importer.factory.FileImporterFactory;
@@ -132,8 +131,8 @@ public class PersonServices {
         }).getContent();
 
         try {
-            FileExporter exporter = this.exporter.getExporter(acceptHeader);
-            return exporter.exportFile(people);
+            PersonExporter exporter = this.exporter.getExporter(acceptHeader);
+            return exporter.exportPeople(people);
         } catch (Exception e) {
             throw new RuntimeException("Error during file export!", e);
         }
@@ -170,6 +169,21 @@ public class PersonServices {
         var people = repository.findPeopleByName(firstName, pageable);
 
         return buildPagedModel(pageable, people);
+    }
+
+    public Resource exportPerson(Long id, String acceptHeader) {
+        logger.info("Exporting data of one Person!");
+
+        var person = repository.findById(id)
+                .map(entity -> parseObject(entity, PersonDTO.class))
+                .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+
+        try {
+            PersonExporter exporter = this.exporter.getExporter(acceptHeader);
+            return exporter.exportPerson(person);
+        } catch (Exception e) {
+            throw new RuntimeException("Error during file export!", e);
+        }
     }
 
     private PagedModel<EntityModel<PersonDTO>> buildPagedModel(Pageable pageable, Page<Person> people) {
