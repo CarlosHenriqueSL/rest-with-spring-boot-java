@@ -6,6 +6,9 @@ file:
   # Altere este caminho conforme a estrutura de pastas da sua maquina.
   # Tambem pode ser sobrescrito pela variavel de ambiente FILE_UPLOAD_DIR.
   upload-dir: ${FILE_UPLOAD_DIR:./UploadDir}
+email:
+  subject: "Default Subject"
+  message: "Default Message"
 spring:
   application:
     name: rest-with-spring-boot-java
@@ -18,6 +21,15 @@ spring:
       hibernate:
     show-sql: false
     open-in-view: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enabled: true
+      mail.smtp.starttls.required: true
   servlet:
     multipart:
       enabled: true
