@@ -4,7 +4,7 @@ import br.com.CarlosHenriqueSL.data.dto.PersonDTO;
 import br.com.CarlosHenriqueSL.exception.RequiredObjectIsNullException;
 import br.com.CarlosHenriqueSL.model.Person;
 import br.com.CarlosHenriqueSL.repositories.PersonRepository;
-import br.com.CarlosHenriqueSL.services.PersonServices;
+import br.com.CarlosHenriqueSL.services.PersonService;
 import br.com.CarlosHenriqueSL.unittests.mapper.mocks.MockPerson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -30,7 +30,7 @@ class PersonServicesTest {
     MockPerson input;
 
     @InjectMocks
-    private PersonServices service;
+    private PersonService service;
 
     @Mock
     PersonRepository repository;

@@ -3,7 +3,7 @@ package br.com.CarlosHenriqueSL.controllers;
 import br.com.CarlosHenriqueSL.controllers.docs.PersonControllerDocs;
 import br.com.CarlosHenriqueSL.data.dto.PersonDTO;
 import br.com.CarlosHenriqueSL.file.exporter.MediaTypes;
-import br.com.CarlosHenriqueSL.services.PersonServices;
+import br.com.CarlosHenriqueSL.services.PersonService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ import java.util.Map;
 public class PersonController implements PersonControllerDocs {
 
     @Autowired
-    private PersonServices service;
+    private PersonService service;
     //private PersonServices service = new PersonServices();
 
     // @CrossOrigin(origins = "http://localhost:8080")

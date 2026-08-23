@@ -2,7 +2,7 @@ package br.com.CarlosHenriqueSL.controllers;
 
 import br.com.CarlosHenriqueSL.controllers.docs.BookControllerDocs;
 import br.com.CarlosHenriqueSL.data.dto.BookDTO;
-import br.com.CarlosHenriqueSL.services.BookServices;
+import br.com.CarlosHenriqueSL.services.BookService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class BookController implements BookControllerDocs {
 
     @Autowired
-    private BookServices service;
+    private BookService service;
     //private BookServices service = new BookServices();
 
     @GetMapping(value = "/{id}",

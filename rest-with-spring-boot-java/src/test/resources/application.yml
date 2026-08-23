@@ -6,6 +6,11 @@ file:
   # Altere este caminho conforme a estrutura de pastas da sua maquina.
   # Tambem pode ser sobrescrito pela variavel de ambiente FILE_UPLOAD_DIR.
   upload-dir: ${FILE_UPLOAD_DIR:./UploadDir}
+security:
+  jwt:
+    token:
+      secret-key: 53cr37676767
+      expire-length: 3600000
 email:
   subject: "Default Subject"
   message: "Default Message"
