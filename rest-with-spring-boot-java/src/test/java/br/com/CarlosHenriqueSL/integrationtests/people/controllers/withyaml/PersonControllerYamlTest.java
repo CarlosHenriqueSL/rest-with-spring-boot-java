@@ -1,10 +1,12 @@
 package br.com.CarlosHenriqueSL.integrationtests.people.controllers.withyaml;
 
 import br.com.CarlosHenriqueSL.config.TestConfigs;
-import br.com.CarlosHenriqueSL.integrationtests.people.controllers.withyaml.mapper.YAMLMapper;
+import br.com.CarlosHenriqueSL.integrationtests.mapper.YAMLMapper;
 import br.com.CarlosHenriqueSL.integrationtests.people.dto.PersonDTO;
 import br.com.CarlosHenriqueSL.integrationtests.people.dto.xml.PagedModelPerson;
 import br.com.CarlosHenriqueSL.integrationtests.testcontainers.AbstractIntegrationTest;
+import br.com.CarlosHenriqueSL.integrationtests.token.dto.AccountCredentialsDTO;
+import br.com.CarlosHenriqueSL.integrationtests.token.dto.TokenDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.EncoderConfig;
@@ -31,26 +33,60 @@ class PersonControllerYamlTest extends AbstractIntegrationTest {
     private static YAMLMapper yamlObjectMapper;
 
     private static PersonDTO person;
+    private static TokenDTO token;
 
     @BeforeAll
     static void setUp() {
         yamlObjectMapper = new YAMLMapper();
 
         person = new PersonDTO();
+        token = new TokenDTO();
     }
 
     @Test
     @Order(1)
-    void createTest() {
-        mockPerson();
+    void signIn() throws JsonProcessingException {
+        AccountCredentialsDTO credentials = new AccountCredentialsDTO("leandro", "admin123");
+
+        var createdToken = given().config(RestAssuredConfig.
+                        config().encoderConfig(
+                                EncoderConfig.encoderConfig().encodeContentTypeAs(
+                                        MediaType.APPLICATION_YAML_VALUE, ContentType.TEXT
+                                )
+                        ))
+                .basePath("/auth/signin")
+                .port(TestConfigs.SERVER_PORT)
+                .contentType(MediaType.APPLICATION_YAML_VALUE)
+                .accept(MediaType.APPLICATION_YAML_VALUE)
+                .body(credentials, yamlObjectMapper)
+                .when()
+                .post()
+                .then()
+                .statusCode(200)
+                .contentType(MediaType.APPLICATION_YAML_VALUE)
+                .extract()
+                .body()
+                .as(TokenDTO.class, yamlObjectMapper);
+
+        token = createdToken;
 
         specification = new RequestSpecBuilder()
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_CARLOS)
+                .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + token.getAccessToken())
                 .setBasePath("/api/person/v1")
                 .setPort(TestConfigs.SERVER_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
                 .build();
+
+        assertNotNull(token.getAccessToken());
+        assertNotNull(token.getRefreshToken());
+    }
+
+    @Test
+    @Order(2)
+    void createTest() {
+        mockPerson();
 
         var createdPerson = given().config(RestAssuredConfig.
                         config().encoderConfig(
@@ -80,11 +116,14 @@ class PersonControllerYamlTest extends AbstractIntegrationTest {
         assertEquals("Torvalds", createdPerson.getLastName());
         assertEquals("Helsinki - Finland", createdPerson.getAddress());
         assertEquals("Male", createdPerson.getGender());
+        assertEquals("https://en.wikipedia.org/wiki/Linus_Torvalds", createdPerson.getProfileUrl());
+        assertEquals("https://en.wikipedia.org/wiki/File:LinuxCon_Europe_Linus_Torvalds_03_(cropped).jpg",
+                createdPerson.getPhotoUrl());
         assertTrue(createdPerson.getEnabled());
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     void updateTest() {
         person.setLastName("Benedict Torvalds");
 
@@ -116,11 +155,14 @@ class PersonControllerYamlTest extends AbstractIntegrationTest {
         assertEquals("Benedict Torvalds", createdPerson.getLastName());
         assertEquals("Helsinki - Finland", createdPerson.getAddress());
         assertEquals("Male", createdPerson.getGender());
+        assertEquals("https://en.wikipedia.org/wiki/Linus_Torvalds", createdPerson.getProfileUrl());
+        assertEquals("https://en.wikipedia.org/wiki/File:LinuxCon_Europe_Linus_Torvalds_03_(cropped).jpg",
+                createdPerson.getPhotoUrl());
         assertTrue(createdPerson.getEnabled());
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     void findByIdTest() {
         var createdPerson = given().config(RestAssuredConfig.
                         config().encoderConfig(
@@ -150,11 +192,14 @@ class PersonControllerYamlTest extends AbstractIntegrationTest {
         assertEquals("Benedict Torvalds", createdPerson.getLastName());
         assertEquals("Helsinki - Finland", createdPerson.getAddress());
         assertEquals("Male", createdPerson.getGender());
+        assertEquals("https://en.wikipedia.org/wiki/Linus_Torvalds", createdPerson.getProfileUrl());
+        assertEquals("https://en.wikipedia.org/wiki/File:LinuxCon_Europe_Linus_Torvalds_03_(cropped).jpg",
+                createdPerson.getPhotoUrl());
         assertTrue(createdPerson.getEnabled());
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     void disableTest() {
         var createdPerson = given().config(RestAssuredConfig.
                         config().encoderConfig(
@@ -183,11 +228,14 @@ class PersonControllerYamlTest extends AbstractIntegrationTest {
         assertEquals("Benedict Torvalds", createdPerson.getLastName());
         assertEquals("Helsinki - Finland", createdPerson.getAddress());
         assertEquals("Male", createdPerson.getGender());
+        assertEquals("https://en.wikipedia.org/wiki/Linus_Torvalds", createdPerson.getProfileUrl());
+        assertEquals("https://en.wikipedia.org/wiki/File:LinuxCon_Europe_Linus_Torvalds_03_(cropped).jpg",
+                createdPerson.getPhotoUrl());
         assertFalse(createdPerson.getEnabled());
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     void deleteTest() {
         given(specification)
                 .pathParam("id", person.getId())
@@ -198,7 +246,7 @@ class PersonControllerYamlTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     void findAllTest() {
         var response = given(specification)
                 .accept(MediaType.APPLICATION_YAML_VALUE)
@@ -240,7 +288,7 @@ class PersonControllerYamlTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     void findByNameTest() throws JsonProcessingException {
 
         // {{baseUrl}}/api/person/v1/findPeopleByName/and?page=1&size=5&direction=asc
@@ -290,5 +338,7 @@ class PersonControllerYamlTest extends AbstractIntegrationTest {
         person.setAddress("Helsinki - Finland");
         person.setGender("Male");
         person.setEnabled(true);
+        person.setProfileUrl("https://en.wikipedia.org/wiki/Linus_Torvalds");
+        person.setPhotoUrl("https://en.wikipedia.org/wiki/File:LinuxCon_Europe_Linus_Torvalds_03_(cropped).jpg");
     }
 }

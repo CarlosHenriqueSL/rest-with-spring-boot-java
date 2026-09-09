@@ -1,8 +1,11 @@
-package br.com.CarlosHenriqueSL.data.dto.secutiry;
+package br.com.CarlosHenriqueSL.integrationtests.token.dto;
+
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+@XmlRootElement
 public class AccountCredentialsDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;

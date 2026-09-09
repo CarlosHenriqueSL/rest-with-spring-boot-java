@@ -3,7 +3,6 @@ package br.com.CarlosHenriqueSL.controllers;
 import br.com.CarlosHenriqueSL.controllers.docs.AuthControllerDocs;
 import br.com.CarlosHenriqueSL.data.dto.secutiry.AccountCredentialsDTO;
 import br.com.CarlosHenriqueSL.services.AuthService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ public class AuthController implements AuthControllerDocs {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request!");
         }
 
-        return ResponseEntity.ok().body(token);
+        return token;
     }
 
     @PutMapping("/refresh/{username}")
@@ -51,7 +50,7 @@ public class AuthController implements AuthControllerDocs {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request!");
         }
 
-        return ResponseEntity.ok().body(token);
+        return token;
     }
 
     @PostMapping(value = "/createUser",

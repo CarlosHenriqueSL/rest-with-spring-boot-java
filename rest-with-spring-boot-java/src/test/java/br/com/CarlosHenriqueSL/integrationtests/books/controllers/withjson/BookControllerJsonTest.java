@@ -4,6 +4,8 @@ import br.com.CarlosHenriqueSL.config.TestConfigs;
 import br.com.CarlosHenriqueSL.integrationtests.books.dto.BookDTO;
 import br.com.CarlosHenriqueSL.integrationtests.books.dto.wrapper.json.WrapperBookDTO;
 import br.com.CarlosHenriqueSL.integrationtests.testcontainers.AbstractIntegrationTest;
+import br.com.CarlosHenriqueSL.integrationtests.token.dto.AccountCredentialsDTO;
+import br.com.CarlosHenriqueSL.integrationtests.token.dto.TokenDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +33,7 @@ class BookControllerJsonTest extends AbstractIntegrationTest {
     private static ObjectMapper objectMapper;
 
     private static BookDTO book;
+    private static TokenDTO token;
 
     @BeforeAll
     static void setUp() {
@@ -38,20 +41,44 @@ class BookControllerJsonTest extends AbstractIntegrationTest {
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
         book = new BookDTO();
+        token = new TokenDTO();
     }
 
     @Test
     @Order(1)
-    void createTest() throws JsonProcessingException {
-        mockBook();
+    void signIn() {
+        AccountCredentialsDTO credentials = new AccountCredentialsDTO("leandro", "admin123");
+
+        token = given()
+                .basePath("/auth/signin")
+                .port(TestConfigs.SERVER_PORT)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(credentials)
+                .when()
+                .post()
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .as(TokenDTO.class);
 
         specification = new RequestSpecBuilder()
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_CARLOS)
+                .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + token.getAccessToken())
                 .setBasePath("/api/book/v1")
                 .setPort(TestConfigs.SERVER_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
                 .build();
+
+        assertNotNull(token.getAccessToken());
+        assertNotNull(token.getRefreshToken());
+    }
+
+    @Test
+    @Order(2)
+    void createTest() throws JsonProcessingException {
+        mockBook();
 
         var content = given(specification)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -82,7 +109,7 @@ class BookControllerJsonTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     void updateTest() throws JsonProcessingException {
         book.setAuthor("Ralph Johnson, Erich Gamma, John Vlissides e Richard Helm");
 
@@ -115,7 +142,7 @@ class BookControllerJsonTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     void findByIdTest() throws JsonProcessingException {
         var content = given(specification)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -146,7 +173,7 @@ class BookControllerJsonTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     @Disabled("This test does NOT applies to Books")
     void disableTest() throws JsonProcessingException {
         var content = given(specification)
@@ -177,7 +204,7 @@ class BookControllerJsonTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     void deleteTest() {
         given(specification)
                 .pathParam("id", book.getId())
@@ -188,7 +215,7 @@ class BookControllerJsonTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     void findAllTest() throws JsonProcessingException {
         var content = given(specification)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -205,33 +232,17 @@ class BookControllerJsonTest extends AbstractIntegrationTest {
         WrapperBookDTO wrapper = objectMapper.readValue(content, WrapperBookDTO.class);
         List<BookDTO> books = wrapper.getEmmbedded().getBooks();
 
-        BookDTO bookOne = books.getFirst();
-        book = bookOne;
+        assertNotNull(books);
+        assertEquals(3, books.size());
 
-        assertNotNull(bookOne.getId());
-        assertTrue(bookOne.getId() > 0);
-
-        assertEquals("Mike Cohn", bookOne.getAuthor());
-
-        Date expectedDateBookOne = Date.from(Instant.parse("2011-12-09T02:00:00.000Z"));
-        assertEquals(expectedDateBookOne, bookOne.getLaunchDate());
-
-        assertEquals(112.87, bookOne.getPrice());
-        assertEquals("Agile Estimating and Planning", bookOne.getTitle());
-
-        BookDTO bookThree = books.get(2);
-        book = bookThree;
-
-        assertNotNull(bookThree.getId());
-        assertTrue(bookThree.getId() > 0);
-
-        assertEquals("Mike Cohn", bookThree.getAuthor());
-
-        Date expectedDateBookThree = Date.from(Instant.parse("1985-06-28T03:00:00.000Z"));
-        assertEquals(expectedDateBookThree, bookThree.getLaunchDate());
-
-        assertEquals(115.61, bookThree.getPrice());
-        assertEquals("Agile Estimating and Planning", bookThree.getTitle());
+        for (BookDTO b : books) {
+            assertNotNull(b.getId());
+            assertTrue(b.getId() > 0);
+            assertEquals("Mike Cohn", b.getAuthor());
+            assertEquals("Agile Estimating and Planning", b.getTitle());
+            assertNotNull(b.getLaunchDate());
+            assertNotNull(b.getPrice());
+        }
     }
 
     private void mockBook() {

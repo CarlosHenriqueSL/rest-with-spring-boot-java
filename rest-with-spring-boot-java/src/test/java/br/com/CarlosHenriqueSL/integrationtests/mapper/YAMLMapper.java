@@ -1,4 +1,4 @@
-package br.com.CarlosHenriqueSL.integrationtests.people.controllers.withyaml.mapper;
+package br.com.CarlosHenriqueSL.integrationtests.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;

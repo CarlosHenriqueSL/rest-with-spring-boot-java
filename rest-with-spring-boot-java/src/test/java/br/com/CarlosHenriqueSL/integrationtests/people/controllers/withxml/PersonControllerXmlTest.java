@@ -4,6 +4,8 @@ import br.com.CarlosHenriqueSL.config.TestConfigs;
 import br.com.CarlosHenriqueSL.integrationtests.people.dto.PersonDTO;
 import br.com.CarlosHenriqueSL.integrationtests.people.dto.xml.PagedModelPerson;
 import br.com.CarlosHenriqueSL.integrationtests.testcontainers.AbstractIntegrationTest;
+import br.com.CarlosHenriqueSL.integrationtests.token.dto.AccountCredentialsDTO;
+import br.com.CarlosHenriqueSL.integrationtests.token.dto.TokenDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -29,6 +31,7 @@ class PersonControllerXmlTest extends AbstractIntegrationTest {
     private static XmlMapper xmlObjectMapper;
 
     private static PersonDTO person;
+    private static TokenDTO token;
 
     @BeforeAll
     static void setUp() {
@@ -36,20 +39,47 @@ class PersonControllerXmlTest extends AbstractIntegrationTest {
         xmlObjectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
         person = new PersonDTO();
+        token = new TokenDTO();
     }
 
     @Test
     @Order(1)
-    void createTest() throws JsonProcessingException {
-        mockPerson();
+    void signIn() throws JsonProcessingException {
+        AccountCredentialsDTO credentials = new AccountCredentialsDTO("leandro", "admin123");
+
+        var content = given()
+                .basePath("/auth/signin")
+                .port(TestConfigs.SERVER_PORT)
+                .contentType(MediaType.APPLICATION_XML_VALUE)
+                .accept(MediaType.APPLICATION_XML_VALUE)
+                .body(credentials)
+                .when()
+                .post()
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .asString();
+
+        token = xmlObjectMapper.readValue(content, TokenDTO.class);
 
         specification = new RequestSpecBuilder()
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_CARLOS)
+                .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + token.getAccessToken())
                 .setBasePath("/api/person/v1")
                 .setPort(TestConfigs.SERVER_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
                 .build();
+
+        assertNotNull(token.getAccessToken());
+        assertNotNull(token.getRefreshToken());
+    }
+
+    @Test
+    @Order(2)
+    void createTest() throws JsonProcessingException {
+        mockPerson();
 
         var content = given(specification)
                 .contentType(MediaType.APPLICATION_XML_VALUE)
@@ -74,11 +104,14 @@ class PersonControllerXmlTest extends AbstractIntegrationTest {
         assertEquals("Torvalds", createdPerson.getLastName());
         assertEquals("Helsinki - Finland", createdPerson.getAddress());
         assertEquals("Male", createdPerson.getGender());
+        assertEquals("https://en.wikipedia.org/wiki/Linus_Torvalds", createdPerson.getProfileUrl());
+        assertEquals("https://en.wikipedia.org/wiki/File:LinuxCon_Europe_Linus_Torvalds_03_(cropped).jpg",
+                createdPerson.getPhotoUrl());
         assertTrue(createdPerson.getEnabled());
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     void updateTest() throws JsonProcessingException {
         person.setLastName("Benedict Torvalds");
 
@@ -105,11 +138,14 @@ class PersonControllerXmlTest extends AbstractIntegrationTest {
         assertEquals("Benedict Torvalds", createdPerson.getLastName());
         assertEquals("Helsinki - Finland", createdPerson.getAddress());
         assertEquals("Male", createdPerson.getGender());
+        assertEquals("https://en.wikipedia.org/wiki/Linus_Torvalds", createdPerson.getProfileUrl());
+        assertEquals("https://en.wikipedia.org/wiki/File:LinuxCon_Europe_Linus_Torvalds_03_(cropped).jpg",
+                createdPerson.getPhotoUrl());
         assertTrue(createdPerson.getEnabled());
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     void findByIdTest() throws JsonProcessingException {
         var content = given(specification)
                 .contentType(MediaType.APPLICATION_XML_VALUE)
@@ -138,7 +174,7 @@ class PersonControllerXmlTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     void disableTest() throws JsonProcessingException {
         var content = given(specification)
                 .accept(MediaType.APPLICATION_XML_VALUE)
@@ -166,7 +202,7 @@ class PersonControllerXmlTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     void deleteTest() {
          given(specification)
                 .pathParam("id", person.getId())
@@ -177,7 +213,7 @@ class PersonControllerXmlTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     void findAllTest() throws JsonProcessingException {
         var content = given(specification)
                 .accept(MediaType.APPLICATION_XML_VALUE)
@@ -220,7 +256,7 @@ class PersonControllerXmlTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     void findByNameTest() throws JsonProcessingException {
 
         // {{baseUrl}}/api/person/v1/findPeopleByName/and?page=1&size=5&direction=asc
@@ -271,5 +307,7 @@ class PersonControllerXmlTest extends AbstractIntegrationTest {
         person.setAddress("Helsinki - Finland");
         person.setGender("Male");
         person.setEnabled(true);
+        person.setProfileUrl("https://en.wikipedia.org/wiki/Linus_Torvalds");
+        person.setPhotoUrl("https://en.wikipedia.org/wiki/File:LinuxCon_Europe_Linus_Torvalds_03_(cropped).jpg");
     }
 }
