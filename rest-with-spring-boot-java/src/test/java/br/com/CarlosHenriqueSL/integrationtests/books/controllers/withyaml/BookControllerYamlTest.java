@@ -1,7 +1,7 @@
 package br.com.CarlosHenriqueSL.integrationtests.books.controllers.withyaml;
 
 import br.com.CarlosHenriqueSL.config.TestConfigs;
-import br.com.CarlosHenriqueSL.integrationtests.books.controllers.withyaml.mapper.YAMLMapper;
+import br.com.CarlosHenriqueSL.integrationtests.mapper.YAMLMapper;
 import br.com.CarlosHenriqueSL.integrationtests.books.dto.BookDTO;
 import br.com.CarlosHenriqueSL.integrationtests.books.dto.xml.PagedModelBook;
 import br.com.CarlosHenriqueSL.integrationtests.testcontainers.AbstractIntegrationTest;
