@@ -31,18 +31,18 @@ jobs:
       - name: Verify Docker
         run: docker info
 
+      - name: Build Application .jar
+        working-directory: ./rest-with-spring-boot-java
+        run: mvn clean package
+        env:
+          DOCKER_API_VERSION: "1.53" # Mantém o cliente compatível com o Docker usado pelo Testcontainers
+
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: surefire-reports
           path: rest-with-spring-boot-java/target/surefire-reports/
-
-      - name: Build Application .jar
-        working-directory: ./rest-with-spring-boot-java
-        run: mvn clean package
-        env:
-          DOCKER_API_VERSION: "1.53" # Mantém o cliente compatível com o Docker usado pelo Testcontainers
 
       - name: Docker Compose Build
         run: docker compose build
