@@ -178,7 +178,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<systemPropertyVariables>
-						<api.version>1.53</api.version>
+						<api.version>1.48</api.version>
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>

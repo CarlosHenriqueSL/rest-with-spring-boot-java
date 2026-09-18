@@ -35,7 +35,7 @@ jobs:
         working-directory: ./rest-with-spring-boot-java
         run: mvn clean package
         env:
-          DOCKER_API_VERSION: "1.53" # Mantém o cliente compatível com o Docker usado pelo Testcontainers
+          DOCKER_API_VERSION: "1.48" # Compatível com a API máxima do Docker no runner do GitHub
 
       - name: Upload test reports
         if: failure()
