@@ -187,7 +187,7 @@ class BookControllerYamlTest extends AbstractIntegrationTest {
 
         assertEquals("Ralph Johnson, Erich Gamma, John Vlissides e Richard Helm", createdBook.getAuthor());
 
-        Date expectedDate = Date.from(Instant.parse("2017-11-29T02:00:00.000Z"));
+        Date expectedDate = Date.from(Instant.parse("2017-11-29T00:00:00.000Z"));
         assertEquals(expectedDate, createdBook.getLaunchDate());
 
         assertEquals(45.00, createdBook.getPrice());
