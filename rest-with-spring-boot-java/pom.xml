@@ -177,9 +177,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<environmentVariables>
-						<DOCKER_HOST>npipe:////./pipe/docker_engine</DOCKER_HOST>
-					</environmentVariables>
 					<systemPropertyVariables>
 						<api.version>1.53</api.version>
 					</systemPropertyVariables>
