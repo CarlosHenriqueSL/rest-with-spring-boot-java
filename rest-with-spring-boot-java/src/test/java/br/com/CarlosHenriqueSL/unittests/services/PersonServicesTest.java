@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static br.com.CarlosHenriqueSL.mapper.ObjectMapper.parseListObjects;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -240,7 +241,7 @@ class PersonServicesTest {
     void findAll() {
         List<Person> list = input.mockEntityList();
         when(repository.findAll()).thenReturn(list);
-        List<PersonDTO> people = new ArrayList<>();
+        List<PersonDTO> people = parseListObjects(list, PersonDTO.class);
 
         assertNotNull(people);
         assertEquals(14, people.size());

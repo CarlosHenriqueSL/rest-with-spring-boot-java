@@ -35,7 +35,7 @@ jobs:
         working-directory: ./rest-with-spring-boot-java
         run: mvn clean package
         env:
-          DOCKER_API_VERSION: "1.48" # Compatível com a API máxima do Docker no runner do GitHub
+          DOCKER_API_VERSION: "1.48"
 
       - name: Upload test reports
         if: failure()
@@ -46,6 +46,9 @@ jobs:
 
       - name: Docker Compose Build
         run: docker compose build
+        env:
+          MYSQL_ROOT_PASSWORD: ci-build-only-root-password
+          MYSQL_PASSWORD: ci-build-only-password
 
       - name: Push to Docker Hub Container Registry
         run: |

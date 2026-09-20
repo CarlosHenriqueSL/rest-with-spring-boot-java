@@ -5,9 +5,9 @@ services:
     restart: always
     environment:
       TZ: America/Sao_Paulo
-      MYSQL_ROOT_PASSWORD: docker
-      MYSQL_USER: docker
-      MYSQL_PASSWORD: admin123
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD must be set in .env}
+      MYSQL_USER: ${MYSQL_USER:-docker}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD must be set in .env}
       MYSQL_DATABASE: rest_with_spring_boot_java
     ports:
       - "3308:3306"
@@ -19,20 +19,33 @@ services:
   rest-with-spring-boot-java:
     image: carloshenriquesl/rest-with-spring-boot-java
     build: ./rest-with-spring-boot-java
-    working_dir: /rest-with-spring-boot-java
+    pull_policy: always
     ports:
       - 80:80
     restart: always
     environment:
       TZ: America/Sao_Paulo
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/rest_with_spring_boot_java?useTimezone=true&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: docker
-      SPRING_DATASOURCE_PASSWORD: admin123
-    command: mvn spring-boot:run
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-docker}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD}
     depends_on:
       - db
     networks:
       - carlos-network
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    restart: always
+    ports:
+      - 9000:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - carlos-network
+
+volumes:
+  portainer_data:
 
 networks:
   carlos-network:
