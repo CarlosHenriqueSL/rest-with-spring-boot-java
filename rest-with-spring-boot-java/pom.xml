@@ -178,7 +178,8 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<systemPropertyVariables>
-						<api.version>1.53</api.version>
+						<api.version>1.48</api.version>
+						<user.timezone>UTC</user.timezone>
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>
