@@ -17,8 +17,8 @@ spring:
     name: rest-with-spring-boot-java
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/rest_with_spring_boot_java?useTimezone=true&serverTimezone=UTC
-    username: root
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/rest_with_spring_boot_java?useTimezone=true&serverTimezone=UTC}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
     password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
     hibernate:
@@ -30,8 +30,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${EMAIL_USERNAME}
-    password: ${EMAIL_PASSWORD}
+    username: ${EMAIL_USERNAME:test_user}
+    password: ${EMAIL_PASSWORD:test_password}
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enabled: true

@@ -1,5 +1,7 @@
 # Rest With Spring Boot Java
 
+[![Continuous Integration and Delivery with GitHub Actions](https://github.com/CarlosHenriqueSL/rest-with-spring-boot-java/actions/workflows/continuous-deployment.yml/badge.svg)](https://github.com/CarlosHenriqueSL/rest-with-spring-boot-java/actions/workflows/continuous-deployment.yml)
+
 Spring Boot 3 REST API for managing people, books, file storage, and CSV/XLSX person imports with MySQL persistence, Flyway migrations, HATEOAS links, and OpenAPI documentation.
 
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)	
