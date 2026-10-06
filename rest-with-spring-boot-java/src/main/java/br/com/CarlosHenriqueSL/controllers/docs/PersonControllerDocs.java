@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-public interface PersonControllerDocs {
+public interface    PersonControllerDocs {
 
     @Operation(summary = "Finds a Person",
             description = "Finds a specific person using the ID",
