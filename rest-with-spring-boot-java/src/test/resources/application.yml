@@ -1,7 +1,7 @@
 server:
   port: 8888
 cors:
-  originPatterns: http://localhost:8080,http://localhost:3000
+  originPatterns: http://localhost:8080,http://localhost:8888,http://localhost:3000
 file:
   upload-dir: ${FILE_UPLOAD_DIR:./UploadDir}
 security:
