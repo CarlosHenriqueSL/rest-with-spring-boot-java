@@ -13,6 +13,8 @@ permissions:
 env:
   REGISTRY: ${{ secrets.REGISTRY_INFO }}
   IMAGE_NAME: rest-with-spring-boot-java
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  REGION: us-east1
 
 jobs:
   build:
@@ -107,19 +109,18 @@ jobs:
         env:
           LOCAL_IMAGE: ${{ secrets.DOCKER_USERNAME }}/rest-with-spring-boot-java
         run: |
-          docker tag $LOCAL_IMAGE:latest $REGISTRY/$IMAGE_NAME:latest
-          docker tag $LOCAL_IMAGE:latest $REGISTRY/$IMAGE_NAME:${{ github.run_id }}
+          docker tag "$LOCAL_IMAGE:latest" "$REGISTRY/$IMAGE_NAME:latest"
+          docker tag "$LOCAL_IMAGE:latest" "$REGISTRY/$IMAGE_NAME:${{ github.run_id }}"
 
-          docker push $REGISTRY/$IMAGE_NAME:latest
-          docker push $REGISTRY/$IMAGE_NAME:${{ github.run_id }}
+          docker push "$REGISTRY/$IMAGE_NAME:latest"
+          docker push "$REGISTRY/$IMAGE_NAME:${{ github.run_id }}"
 
       - name: Deploy to Google Cloud Run
-        env:
-          LOCAL_IMAGE: ${{ secrets.DOCKER_USERNAME }}/rest-with-spring-boot-java
         run: |
           gcloud run deploy rest-with-spring-boot-java \
-            --image docker push $REGISTRY/$IMAGE_NAME:latest
-            --region us-east1 \
+            --project "$PROJECT_ID" \
+            --image "$REGISTRY/$IMAGE_NAME:latest" \
+            --region "$REGION" \
             --platform managed \
             --allow-unauthenticated
 
