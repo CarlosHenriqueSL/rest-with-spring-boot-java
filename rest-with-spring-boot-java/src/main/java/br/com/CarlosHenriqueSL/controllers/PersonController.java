@@ -69,7 +69,7 @@ public class PersonController implements PersonControllerDocs {
             @RequestParam(value = "direction", defaultValue = "asc") String direction
     ) {
         var sortDirection = "desc".equalsIgnoreCase(direction) ? Direction.DESC : Direction.ASC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "firstName"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "firstName", "lastName", "id"));
         return ResponseEntity.ok(service.findAll(pageable));
     }
 
@@ -85,7 +85,7 @@ public class PersonController implements PersonControllerDocs {
             HttpServletRequest request
     ) {
         var sortDirection = "desc".equalsIgnoreCase(direction) ? Direction.DESC : Direction.ASC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "firstName"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "firstName", "lastName", "id"));
 
         String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
 
@@ -120,7 +120,7 @@ public class PersonController implements PersonControllerDocs {
             @RequestParam(value = "direction", defaultValue = "asc") String direction
     ) {
         var sortDirection = "desc".equalsIgnoreCase(direction) ? Direction.DESC : Direction.ASC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "firstName"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "firstName", "lastName", "id"));
         return ResponseEntity.ok(service.findbyName(firstName, pageable));
     }
 
