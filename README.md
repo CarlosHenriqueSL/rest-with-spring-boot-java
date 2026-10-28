@@ -6,6 +6,7 @@
 ![MySQL](https://img.shields.io/badge/MySQL-9.1.0-blue?logo=mysql)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)
 ![AWS ECS](https://img.shields.io/badge/AWS-ECS-FF9900?logo=amazonaws)
+![Docker Hub Repo](https://img.shields.io/docker/pulls/carloshenriquesl/rest-with-spring-boot-java.svg)
 
 A production-oriented REST API built with Java 21 and Spring Boot. The project demonstrates clean backend architecture, database integration, JWT authentication, file processing, email delivery, report generation, automated testing, Docker, and continuous deployment to AWS ECS.
 
